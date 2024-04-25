@@ -27,7 +27,7 @@ from .qwen2 import qwen2_loader, qwen2_model, qwen2_quantization
 from .rwkv5 import rwkv5_loader, rwkv5_model, rwkv5_quantization
 from .rwkv6 import rwkv6_loader, rwkv6_model, rwkv6_quantization
 from .stable_lm import stablelm_loader, stablelm_model, stablelm_quantization
-
+from .imp import imp_model, imp_loader, imp_quantization
 ModelConfig = Any
 """A ModelConfig is an object that represents a model architecture. It is required to have
 a class method `from_file` with the following signature:
@@ -353,6 +353,20 @@ MODELS: Dict[str, Model] = {
             "group-quant": eagle_quantization.group_quant,
             "ft-quant": eagle_quantization.ft_quant,
             "awq": eagle_quantization.awq_quant,
+        },
+    ),
+    "imp": Model(
+        name="imp",
+        model=imp_model.ImpForCasualLM,
+        config=imp_model.PhiConfig,
+        source={
+            "huggingface-torch": imp_loader.huggingface,
+            "huggingface-safetensor": imp_loader.huggingface,
+        },
+        quantize={
+            "group-quant": imp_quantization.group_quant,
+            "no-quant": imp_quantization.no_quant,
+            "awq": imp_quantization.awq_quant,
         },
     ),
 }
