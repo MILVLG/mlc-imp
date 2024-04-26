@@ -71,7 +71,10 @@ class Conversation {
    * \note This option is only used for llama models atm.
    */
   bool add_bos = false;
-
+  
+  bool use_pixel_values = true;
+  /*! \brief The image token index (if use_pixel_values is true) */
+  int32_t image_token_index = 50296;
   Conversation() = default;
 
   inline bool operator==(const Conversation& other) const {

@@ -34,22 +34,21 @@ std::string TokenizerObj::Decode(const std::vector<int32_t>& token_ids) const {
   return tokenizer->Decode(token_ids);
 }
 
-size_t TokenizerObj::GetVocabSize() const { return tokenizer->GetVocabSize(); }
-
-std::string TokenizerObj::IdToToken(int32_t token_id) const {
-  return tokenizer->IdToToken(token_id);
-}
-
-int32_t TokenizerObj::TokenToId(const std::string& token) const {
-  return tokenizer->TokenToId(token);
-}
-
 Tokenizer Tokenizer::FromPath(const String& _path) {
   std::filesystem::path path(_path.operator std::string());
   std::filesystem::path sentencepiece;
   std::filesystem::path huggingface;
   std::filesystem::path rwkvworld;
   CHECK(std::filesystem::exists(path)) << "Cannot find tokenizer via path: " << _path;
+
+  sentencepiece = path / "tokenizer.model";
+  huggingface = path / "tokenizer.json";
+  rwkvworld = path / "tokenizer_model";
+  if (std::filesystem::exists(huggingface)) {
+    LOG(INFO) << "Loading huggingface tokenizer";
+    return Tokenizer(tokenizers::Tokenizer::FromBlobJSON(LoadBytesFromFile(huggingface.string())));
+  }
+
   if (std::filesystem::is_directory(path)) {
     sentencepiece = path / "tokenizer.model";
     huggingface = path / "tokenizer.json";
@@ -64,6 +63,7 @@ Tokenizer Tokenizer::FromPath(const String& _path) {
         std::string vocab = LoadBytesFromFile(vocab_path.string());
         std::string merges = LoadBytesFromFile(merges_path.string());
         std::string added_tokens = LoadBytesFromFile(added_tokens_path.string());
+        LOG(INFO) << "Loading ByteLevelBPE tokenizer";
         return Tokenizer(tokenizers::Tokenizer::FromBlobByteLevelBPE(vocab, merges, added_tokens));
       }
     }
@@ -72,10 +72,8 @@ Tokenizer Tokenizer::FromPath(const String& _path) {
     huggingface = path.parent_path() / "tokenizer.json";
     rwkvworld = path.parent_path() / "tokenizer_model";
   }
-  if (std::filesystem::exists(huggingface)) {
-    return Tokenizer(tokenizers::Tokenizer::FromBlobJSON(LoadBytesFromFile(huggingface.string())));
-  }
   if (std::filesystem::exists(sentencepiece)) {
+    LOG(INFO) << "Loading sentencepiece tokenizer";
     LOG(WARNING)
         << "Using `tokenizer.model` since we cannot locate `tokenizer.json`.\n"
         << "It is recommended to use `tokenizer.json` to ensure all token mappings are included, "
