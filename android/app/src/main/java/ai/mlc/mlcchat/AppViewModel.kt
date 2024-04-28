@@ -1,12 +1,14 @@
 package ai.mlc.mlcchat
 
 import ai.mlc.mlcllm.ChatModule
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Environment
 import android.widget.Toast
+import androidx.annotation.HalfFloat
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.AndroidViewModel
@@ -131,13 +133,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         )
         if (!isBuiltin) {
             updateAppConfig {
-                appConfig.modelList.add(
-                    ModelRecord(
-                        modelUrl,
-                        modelConfig.modelId,
-                        modelConfig.estimatedVramBytes,
-                        modelConfig.modelLib
-                    )
+                appConfig.modelList.add(ModelRecord(
+                    modelUrl,
+                    modelConfig.modelId,
+                    modelConfig.estimatedVramBytes,
+                    modelConfig.modelLib)
                 )
             }
         }
@@ -163,11 +163,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 
-    private fun downloadModelConfig(
-        modelUrl: String,
-        modelRecord: ModelRecord,
-        isBuiltin: Boolean
-    ) {
+    private fun downloadModelConfig(modelUrl: String, modelRecord: ModelRecord, isBuiltin: Boolean) {
         thread(start = true) {
             try {
                 val url = URL("${modelUrl}${ModelUrlSuffix}${ModelConfigFilename}")
@@ -489,7 +485,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         fun startChat() {
             chatState.requestReloadChat(
                 modelConfig,
-                modelDirFile.absolutePath,
+                modelDirFile.absolutePath
             )
         }
 
@@ -506,8 +502,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         private var modelLib = ""
         private var modelPath = ""
         private val executorService = Executors.newSingleThreadExecutor()
+        private var has_image_prompt = false
 
         private fun mainResetChat() {
+            has_image_prompt = false
             executorService.submit {
                 callBackend { backend.resetChat() }
                 viewModelScope.launch {
@@ -619,7 +617,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
 
         fun requestReloadChat(modelConfig: ModelConfig, modelPath: String) {
-
             if (this.modelName.value == modelConfig.modelId && this.modelLib == modelConfig.modelLib && this.modelPath == modelPath) {
                 return
             }
@@ -657,13 +654,35 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
+        fun requestImage(img: FloatArray) {
+            require(chatable())
+            var newText = ""
+            switchToGenerating()
+            Toast.makeText(application, "Image Processing...", Toast.LENGTH_SHORT).show()
+            executorService.submit {
+                if (!callBackend { backend.image(img) }) return@submit
+                has_image_prompt = true
+                viewModelScope.launch {
+                    report.value = "Image process is done, ask any question"
+                    if (modelChatState.value == ModelChatState.Generating) switchToReady()
+                }
+            }
+
+        }
+
+
         fun requestGenerate(prompt: String) {
             require(chatable())
             switchToGenerating()
             executorService.submit {
                 appendMessage(MessageRole.User, prompt)
                 appendMessage(MessageRole.Bot, "")
-                if (!callBackend { backend.prefill(prompt) }) return@submit
+                if (has_image_prompt) {
+                    if (!callBackend { backend.prefill("<image>\n"+prompt) }) return@submit
+                    has_image_prompt = false
+                } else {
+                    if (!callBackend { backend.prefill(prompt) }) return@submit
+                }
                 while (!backend.stopped()) {
                     if (!callBackend {
                             backend.decode()
@@ -728,7 +747,7 @@ enum class MessageRole {
 
 data class DownloadTask(val url: URL, val file: File)
 
-data class MessageData(val role: MessageRole, val text: String, val id: UUID = UUID.randomUUID())
+data class MessageData(val role: MessageRole, val text: String, val id: UUID = UUID.randomUUID(), var image_path: String = "")
 
 data class AppConfig(
     @SerializedName("model_libs") var modelLibs: MutableList<String>,
