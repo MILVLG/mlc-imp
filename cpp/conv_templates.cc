@@ -736,6 +736,28 @@ Conversation Orion() {
   return conv;
 }
 
+Conversation Imp() {
+  Conversation conv;
+  conv.name = "imp";
+  conv.system = "";
+      //   ("A chat between a curious user and an artificial intelligence assistant. "
+      //  "The assistant gives helpful, detailed, and polite answers to the user's questions.");
+  conv.roles = {"USER", "ASSISTANT"};
+  conv.messages = {};
+  conv.offset = 0;
+  conv.separator_style = SeparatorStyle::kSepRoleMsg;
+  conv.seps = {" ", "</s>"};
+  conv.role_msg_sep = ": ";
+  conv.role_empty_sep = ":";
+  // TODO(mlc-team): add eos to mlc-chat-config
+  // and remove eos from stop token setting.
+  conv.stop_tokens = {50295};
+  conv.stop_str = "</s>";
+  conv.add_bos = false;
+  conv.use_pixel_values = true;
+  conv.image_token_index = 50296;
+  return conv;
+}
 }  // namespace
 
 using ConvFactory = Conversation (*)();
@@ -778,6 +800,7 @@ Conversation Conversation::FromTemplate(const std::string& name) {
       {"gemma_instruction", GemmaInstruction},
       {"internlm", ChatML},
       {"orion", Orion},
+      {"imp", Imp}
   };
   auto it = factory.find(name);
   if (it == factory.end()) {

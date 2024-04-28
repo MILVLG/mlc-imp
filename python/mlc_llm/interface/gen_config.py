@@ -61,7 +61,7 @@ class MLCChatConfig:  # pylint: disable=too-many-instance-attributes
             "pad_token_id": 0,
             "bos_token_id": 1,
             "eos_token_id": 2,
-            "temperature": 0.7,
+            "temperature": 0,
             "presence_penalty": 0.0,
             "frequency_penalty": 0.0,
             "repetition_penalty": 1.0,
@@ -311,4 +311,5 @@ CONV_TEMPLATES = {
     "gemma_instruction",
     "orion",
     "llava",
+    "imp"
 }
