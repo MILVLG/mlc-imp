@@ -802,6 +802,7 @@ class ChatModule:  # pylint: disable=too-many-instance-attributes
         generation_config: Optional[GenerationConfig] = None,
         progress_callback=None,
         stateless=False,
+        **kwargs
     ) -> Union[str, List[str]]:
         r"""A high-level method that returns the full response from the chat module given a user
         prompt. User can optionally specify which callback method to use upon receiving the
@@ -862,13 +863,14 @@ class ChatModule:  # pylint: disable=too-many-instance-attributes
         for _ in range(num_return_sequences):
             if stateless:
                 self.reset_chat()
-            self._prefill(prompt, generation_config=generation_config)
+            self._prefill(prompt, generation_config=generation_config, **kwargs)
 
             if not progress_callback:
                 while not self._stopped():
                     self._decode(generation_config=generation_config)
                 new_msg = self._get_message()
                 new_msgs.append(new_msg)
+                print(self._runtime_stats_text_func())
             else:
                 # apply callback with a rate of callback_interval
                 i, new_msg = 0, ""
@@ -1026,6 +1028,7 @@ class ChatModule:  # pylint: disable=too-many-instance-attributes
         decode_next_token: bool = True,
         place_in_prompt: PlaceInPrompt = PlaceInPrompt.All,
         generation_config: Optional[GenerationConfig] = None,
+        **kwargs
     ):
         r"""Run prefill stage for a given input and optionally decode the first output token.
         User can decide where to place the input in the prompt.
@@ -1085,8 +1088,9 @@ class ChatModule:  # pylint: disable=too-many-instance-attributes
         else:
             input_str = input
 
+        pixel_values = kwargs["pixel_values"] if "pixel_values" in kwargs else None
         self._prefill_func(
-            input_str, decode_next_token, place_in_prompt.value, generation_config_str
+            input_str, decode_next_token, place_in_prompt.value, generation_config_str, pixel_values
         )
 
     def _embed(
