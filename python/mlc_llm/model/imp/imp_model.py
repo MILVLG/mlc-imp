@@ -596,7 +596,7 @@ class ImpForCasualLM(nn.Module):
             name_hint="combined_embeddings",
             args=[input_embeddings, image_features, new_shape, insert_index],
         )
-        print(combined_embeddings)
+        # print(combined_embeddings)
         return combined_embeddings
 
     def embed(self, input_ids: Tensor) -> Tensor:

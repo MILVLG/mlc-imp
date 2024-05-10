@@ -1021,7 +1021,7 @@ class LLMChat {
     auto tend = std::chrono::high_resolution_clock::now();
 
     this->prefill_total_time += static_cast<double>((tend - tstart).count()) / 1e9;
-    this->prefill_total_tokens += token_len;
+    // this->prefill_total_tokens += token_len;
     this->ProcessNextToken(next_token, generation_config);
   }
 
@@ -1376,6 +1376,8 @@ class LLMChat {
         } else {
           embed = ft_.embed_func_(input_data, params_);
         }
+        this->prefill_total_tokens = embed.Shape()[1];
+        LOG(INFO) << embed.Shape()[1];
         IntTuple seq_ids_tuple({0});
         ShapeTuple input_len_shape = ShapeTuple({static_cast<int64_t>(embed.Shape()[1])});
         ft_.kv_cache_begin_forward_func_(kv_cache_, seq_ids_tuple, input_len_shape);

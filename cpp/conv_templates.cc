@@ -739,9 +739,9 @@ Conversation Orion() {
 Conversation Imp() {
   Conversation conv;
   conv.name = "imp";
-  conv.system = "";
-      //   ("A chat between a curious user and an artificial intelligence assistant. "
-      //  "The assistant gives helpful, detailed, and polite answers to the user's questions.");
+  conv.system = 
+        ("A chat between a curious user and an artificial intelligence assistant. "
+       "The assistant gives helpful, detailed, and polite answers to the user's questions.");
   conv.roles = {"USER", "ASSISTANT"};
   conv.messages = {};
   conv.offset = 0;

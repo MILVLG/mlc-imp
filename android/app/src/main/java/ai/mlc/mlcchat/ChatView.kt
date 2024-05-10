@@ -5,7 +5,9 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Half
@@ -173,10 +175,23 @@ fun compressImage(image: Bitmap): Bitmap? {
     return BitmapFactory.decodeStream(isBm, null, null) //把ByteArrayInputStream数据生成图片
 }
 fun scaleSize(image: Bitmap, newW : Int, newH: Int): Bitmap {
-    return Bitmap.createScaledBitmap(image, newW, newH, true)
+    if (image.height == image.width)
+        return image
+    val maxDimension = Math.max(image.height, image.width)
+    val squareBitmap = Bitmap.createBitmap(maxDimension, maxDimension, image.config)
+    val canvas = Canvas(squareBitmap)
+    val paint = Paint()
+    paint.color = Color.rgb(127,127,127)
+    canvas.drawRect(0f, 0f, maxDimension.toFloat(), maxDimension.toFloat(), paint)
+    if (image.height > image.width) {
+        canvas.drawBitmap(image, (image.height-image.width)/2f, 0f, null)
+    } else {
+        canvas.drawBitmap(image, 0f, (image.width-image.height)/2f, null)
+    }
+    return Bitmap.createScaledBitmap(squareBitmap, newW, newH, true)
 }
 
-fun getImage(srcPath: String?): Bitmap? { //3 * 384 * 384
+fun getImage(srcPath: String?): Bitmap? {
     if (TextUtils.isEmpty(srcPath)) //如果图片路径为空 直接返回
         return null
     val newOpts = BitmapFactory.Options()
@@ -187,13 +202,13 @@ fun getImage(srcPath: String?): Bitmap? { //3 * 384 * 384
     val w = newOpts.outWidth
     val h = newOpts.outHeight
     //现在主流手机比较多是800*480分辨率，所以高和宽我们设置为
-    val hh = 384f //这里设置高度为224f
-    val ww = 384f //这里设置宽度为224f
+    val hh = 224f //这里设置高度为224f
+    val ww = 224f //这里设置宽度为224f
     //缩放比。由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
     var be = 1 //be=1表示不缩放
     if (w > h && w > ww) { //如果宽度大的话根据宽度固定大小缩放
         be = (newOpts.outWidth / ww).toInt()
-    } else if (w < h && h > hh) { //如果高度高的话根据宽度固定大小缩放
+    } else if (w < h && h > hh) { //如果高度高的话根据高度固定大小缩放
         be = (newOpts.outHeight / hh).toInt()
     }
     if (be <= 0) be = 1
@@ -201,7 +216,7 @@ fun getImage(srcPath: String?): Bitmap? { //3 * 384 * 384
     //重新读入图片，注意此时已经把options.inJustDecodeBounds 设回false了
     bitmap = BitmapFactory.decodeFile(srcPath, newOpts)
     //return compressImage(bitmap) //压缩好比例大小后再进行质量压缩
-    return scaleSize(bitmap, 384, 384)
+    return scaleSize(bitmap, 224, 224)
 }
 
 fun bitmapToBytes(bitmap: Bitmap): FloatArray{
@@ -317,6 +332,22 @@ fun SendMessageView(chatState: AppViewModel.ChatState, activity: Activity) {
             modifier = Modifier
                 .weight(9f),
         )
+        IconButton(
+            onClick = {
+                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                startActivityForResult(activity, intent, 1, null)
+                Log.v("get_image", "after startActivityForResult" + activity.image_path)
+            },
+            modifier = Modifier
+                .aspectRatio(1f)
+                .weight(1f),
+            enabled = (chatState.chatable() && !local_activity.has_image)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.AddAPhoto,
+                contentDescription = "use camera",
+            )
+        }
         IconButton(
             onClick = {
                 val intent = Intent()

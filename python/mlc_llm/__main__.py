@@ -50,3 +50,13 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+'''
+mlc_llm convert_weight --model-type imp ./dist/models/imp-v1-3b_224 --quantization q4f16_1 -o ./dist/imp-v1-3b_224-q4f16_1
+mlc_llm gen_config ./dist/models/imp-v1-3b_224 --quantization q4f16_1 --conv-template imp -o ./dist/imp-v1-3b_224-q4f16_1
+mlc_llm compile ./dist/imp-v1-3b_224-q4f16_1/mlc-chat-config.json --device vulkan -o ./dist/libs/imp-v1-3b_224-q4f16_1-vulkan.so
+mlc_llm compile ./dist/imp-v1-3b_224-q4f16_1/mlc-chat-config.json --device android -o ./dist/libs/imp-v1-3b_224-q4f16_1-android.tar
+
+git remote set-url origin https://ricar0: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@huggingface.co/ricar0/imp-v1-3b-q4f16_1-mlc.git
+
+'''

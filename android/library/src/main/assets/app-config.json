@@ -1,12 +1,12 @@
 {
   "model_list": [
     {
-      "model_url": "https://hf-mirror.com/ricar0/imp-v1-3b-q4f16_1-mlc",
+      "model_url": "https://hf-mirror.com/ricar0/imp-v1-3b-224-q4f16_1-mlc",
       "model_lib": "imp_q4f16_1",
-      "model_id": "imp-v1-3b-q4f16_1"
+      "model_id": "imp-v1-3b-224-q4f16_1"
     }
   ],
   "model_lib_path_for_prepare_libs": {
-    "imp_q4f16_1": "libs/imp-v1-3b-q4f16_1-android.tar"
+    "imp_q4f16_1": "libs/imp-v1-3b_224-q4f16_1-android.tar"
   }
 }
