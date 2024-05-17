@@ -490,17 +490,6 @@ class PhiForCausalLM(nn.Module):
         }
         return nn.spec.ModuleSpec.from_raw(mod_spec, self)
 
-
-def corner_pooling(input_tensor: Tensor, num_patches: int, conv_size: int) -> Tensor:
-    batch_size = input_tensor.shape[0]
-    input_tensor = op.reshape(input_tensor, shape=(batch_size, num_patches, num_patches, -1))
-    # print(input_tensor)
-    input_tensor = op.concat(op.split(input_tensor, num_patches, axis=1)[::conv_size], dim=1)
-    input_tensor = op.concat(op.split(input_tensor, num_patches, axis=2)[::conv_size], dim=2)
-    new_patches= (num_patches-1) // conv_size + 1
-    input_tensor = op.reshape(input_tensor, shape=(batch_size, new_patches ** 2, -1))
-    return input_tensor
-
 class ImpMultiModalProjector(nn.Module):
     def __init__(self, config: PhiConfig):
         super().__init__()
@@ -510,9 +499,6 @@ class ImpMultiModalProjector(nn.Module):
         self.linear_2 = nn.Linear(config.n_embd, config.n_embd)
 
     def forward(self, image_features: Tensor) -> Tensor:
-        # num_patches = self.vit_config.image_size // self.vit_config.patch_size
-        # image_features = corner_pooling(image_features, num_patches, 2)
-        # print(image_features)
         hidden_states = self.linear_1(image_features)
         hidden_states = self.act(hidden_states)
         hidden_states = self.linear_2(hidden_states)

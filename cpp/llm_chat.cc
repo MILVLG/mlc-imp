@@ -385,12 +385,12 @@ class LLMChat {
        << this->prefill_total_tokens / (this->prefill_total_time + this->embed_total_time)
        << " tok/s"
        << ", decode: " << std::setprecision(1) << std::fixed
-       << this->decode_total_tokens / this->decode_total_time << " tok/s"
-       << " prefill:" << std::setprecision(1) << std::fixed
-       << this->prefill_total_time
-       << " s"
-       << ", decode: " << std::setprecision(1) << std::fixed
-       << this->decode_total_time << " s";
+       << this->decode_total_tokens / this->decode_total_time << " tok/s";
+      //  << " prefill:" << std::setprecision(1) << std::fixed
+      //  << this->prefill_total_time
+      //  << " s"
+      //  << ", decode: " << std::setprecision(1) << std::fixed
+      //  << this->decode_total_time << " s";
 
     return os.str();
   }

@@ -29,7 +29,7 @@ class ImpVisionConfig(ConfigBase):  # pylint: disable=too-many-instance-attribut
     """
 
     hidden_size: int = 1152
-    image_size: int = 224
+    image_size: int = 196
     intermediate_size: int = 4304
     num_attention_heads: int = 16
     num_hidden_layers: int = 26
@@ -194,26 +194,6 @@ class SigLipEncoder(Module):
         encoder_states = encoder_states + (hidden_states,)
         return encoder_states
 
-def corner_pooling(input_tensor: Tensor, num_patches: int, conv_size: int) -> Tensor:
-    batch_size = input_tensor.shape[0]
-    input_tensor = op.reshape(input_tensor, shape=(batch_size, num_patches, num_patches, -1))
-    print(input_tensor)
-    input_tensor = op.concat(op.split(input_tensor, num_patches, axis=1)[::conv_size], dim=1)
-    input_tensor = op.concat(op.split(input_tensor, num_patches, axis=2)[::conv_size], dim=2)
-    new_patches= (num_patches-1) // conv_size + 1
-    input_tensor = op.reshape(input_tensor, shape=(batch_size, new_patches ** 2, -1))
-    print(input_tensor)
-    return input_tensor
-
-# def avg_pooling(input_tensor: Tensor, kernel_size: int, strides: int, num_patches: int) -> Tensor:
-#     batch_size = input_tensor.shape[0]
-#     input_tensor = op.reshape(input_tensor, shape=(batch_size, -1, num_patches, num_patches))
-#     print(input_tensor)
-#     input_tensor = nn.avg_pool2d(input_tensor, kernel_size, strides, ceil_mode=True)
-#     new_patches= (num_patches-1) // kernel_size + 1
-#     input_tensor = op.reshape(input_tensor, shape=(batch_size, new_patches ** 2, -1))
-#     print(input_tensor)
-#     return input_tensor
 
 class SigLipVisionTransformer(Module):
     def __init__(self, config: ImpVisionConfig):
@@ -226,10 +206,7 @@ class SigLipVisionTransformer(Module):
 
     def forward(self, pixel_values: Tensor) -> Tensor:
         hidden_states = self.embeddings(pixel_values)
-        # avg_pool2d to reduce visual tokens
-        # hidden_states = avg_pooling(hidden_states, 2, 2, 27)  
-        # hidden_states = corner_pooling(hidden_states, 27, 2)  
-        # print(hidden_states)
+        print(hidden_states)
         encoder_outputs = self.encoder(inputs_embeds=hidden_states)
         return encoder_outputs
     
