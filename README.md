@@ -1,6 +1,6 @@
 # 😈 MLC-Imp
 
-🙌 Hi There! This is a lightweight deployment solution for Imp based on [MLC-LLM](https://github.com/mlc-ai/mlc-llm) and [MLC-MiniCPM](https://github.com/OpenBMB/mlc-MiniCPM). We deployed Imp on mobile devices📱and greatly improved the running speed during model inference.
+🙌 Hi There! This is a lightweight deployment solution for Imp based on [MLC-LLM](https://github.com/mlc-ai/mlc-llm) and [MLC-MiniCPM](https://github.com/OpenBMB/mlc-MiniCPM). We deployed Imp on mobile devices📱and greatly improved the running speed🚀 during model inference.
 
 ## Model Description
 
