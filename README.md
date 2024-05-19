@@ -1,240 +1,168 @@
-[discord-url]: https://discord.gg/9Xpy2HGBuD
+# 😈 MLC-Imp
 
-# MLC LLM
+🙌 Hi There! This is a lightweight deployment solution for Imp based on [MLC-LLM](https://github.com/mlc-ai/mlc-llm) and [MLC-MiniCPM](https://github.com/OpenBMB/mlc-MiniCPM). We deployed Imp on mobile devices📱and greatly improved the running speed during model inference.
 
-[Documentation](https://llm.mlc.ai/docs) | [Blog](https://blog.mlc.ai/) | [Discord][discord-url]
+## Model Description
 
-**M**achine **L**earning **C**ompilation for **L**arge **L**anguage **M**odels (MLC LLM) is a high-performance universal deployment solution that allows native deployment of any large language models with native APIs with compiler acceleration. The mission of this project is to enable everyone to develop, optimize and deploy AI models natively on everyone's devices with ML compilation techniques.
+⚠️ Our default version is to use Siglip with an input image size of 384x384, but considering the limitation of running speed on the mobile phone, we retrained Imp to use a Siglip version with an input image size of 196x196. (More details can be viewed in [arXiv]()).
 
-**Universal deployment.** MLC LLM supports the following platforms and hardware:
+⚠️ Note that the models run on android are quantized to 4-bit and may lose some performance.
 
-<table style="width:100%">
-  <thead>
-    <tr>
-      <th style="width:15%"> </th>
-      <th style="width:20%">AMD GPU</th>
-      <th style="width:20%">NVIDIA GPU</th>
-      <th style="width:20%">Apple GPU</th>
-      <th style="width:24%">Intel GPU</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Linux / Win</td>
-      <td>✅ Vulkan, ROCm</td>
-      <td>✅ Vulkan, CUDA</td>
-      <td>N/A</td>
-      <td>✅ Vulkan</td>
-    </tr>
-    <tr>
-      <td>macOS</td>
-      <td>✅ Metal (dGPU)</td>
-      <td>N/A</td>
-      <td>✅ Metal</td>
-      <td>✅ Metal (iGPU)</td>
-    </tr>
-    <tr>
-      <td>Web Browser</td>
-      <td colspan=4>✅ WebGPU and WASM </td>
-    </tr>
-    <tr>
-      <td>iOS / iPadOS</td>
-      <td colspan=4>✅ Metal on Apple A-series GPU</td>
-    </tr>
-    <tr>
-      <td>Android</td>
-      <td colspan=2>✅ OpenCL on Adreno GPU</td>
-      <td colspan=2>✅ OpenCL on Mali GPU</td>
-    </tr>
-  </tbody>
-</table>
+🎉 The model weights of `imp-v1-3b-196` are on 🤗[[Huggingface](https://huggingface.co/MILVLG/imp-v1-3b/)\] (Approximately 1.9G of space occupied)
 
+## Run on Android
+### Android APK
 
-## Quick Start
+1. Accept camera & photo permission
 
-We introduce the quick start examples of chat CLI, Python API and REST server here to use MLC LLM.
-We use 4-bit quantized 8B Llama-3 model for demonstration purpose.
-The pre-quantized Llama-3 weights is available at https://huggingface.co/mlc-ai/Llama-3-8B-Instruct-q4f16_1-MLC.
-You can also try out unquantized Llama-3 model by replacing `q4f16_1` to `q0f16` in the examples below.
-Please visit our [documentation](https://llm.mlc.ai/docs/index.html) for detailed quick start and introduction.
+<img src="assets/permission.jpg" style="zoom:30%">
 
-### Installation
+2. Download model: (1) Press the download button (2) Wait for the progress bar to fill up (3) Start chat 
 
-MLC LLM is available via [pip](https://llm.mlc.ai/docs/install/mlc_llm.html#install-mlc-packages).
-It is always recommended to install it in an isolated conda virtual environment.
+<img src="assets/download1.jpg" style="zoom:40%">
+<img src="assets/download2.jpg" style="zoom:40%">
+<img src="assets/download3.jpg" style="zoom:40%">
 
-To verify the installation, activate your virtual environment, run
+3. Chat with Imp: (1) Wait for model initialization until "Ready to chat" pop up. (2) Upload image (3) Type and send question
+    - Chat mode: Text or Vision are both support
 
-```bash
-python -c "import mlc_llm; print(mlc_llm.__path__)"
-```
+<img src="assets/chat1.jpg" style="zoom:25%">
+<img src="assets/chat2.jpg" style="zoom:25%">
 
-You are expected to see the installation path of MLC LLM Python package.
+4. Demo
 
-### Chat CLI
+<img src="assets/chat3.jpg" style="zoom:25%">
+<img src="assets/chat4.jpg" style="zoom:25%">
 
-We can try out the chat CLI in MLC LLM with 4-bit quantized 8B Llama-3 model.
+### Prepare Enviroment
 
-```bash
-mlc_llm chat HF://mlc-ai/Llama-3-8B-Instruct-q4f16_1-MLC
-```
+1. Follow https://llm.mlc.ai/docs/install/tvm.html to Install TVM Unity Compiler
 
-It may take 1-2 minutes for the first time running this command.
-After waiting, this command launch a chat interface where you can enter your prompt and chat with the model.
+2. Follow https://llm.mlc.ai/docs/install/mlc_llm.html to Install MLC LLM Python Package
+
+3. Follow https://llm.mlc.ai/docs/deploy/android.html to prepare android requirements.
+
+### Compile Model
+
+put huggingface downloaded model checkpoint into `dist/models`.
 
 ```
-You can use the following special commands:
-/help               print the special commands
-/exit               quit the cli
-/stats              print out the latest stats (token/sec)
-/reset              restart a fresh chat
-/set [overrides]    override settings in the generation config. For example,
-                      `/set temperature=0.5;max_gen_len=100;stop=end,stop`
-                      Note: Separate stop words in the `stop` option with commas (,).
-Multi-line input: Use escape+enter to start a new line.
+# covert imp model into 4bit
+mlc_llm convert_weight --model-type imp ./dist/models/imp-v1-3b-196 --quantization q4f16_1 -o ./dist/imp-v1-3b-196-q4f16_1
 
-user: What's the meaning of life
-assistant:
-What a profound and intriguing question! While there's no one definitive answer, I'd be happy to help you explore some perspectives on the meaning of life.
+# generate config
+mlc_llm gen_config ./dist/models/imp-v1-3b-196 --quantization q4f16_1 --conv-template imp -o ./dist/imp-v1-3b-196-q4f16_1
 
-The concept of the meaning of life has been debated and...
+# compile to android
+mlc_llm compile ./dist/imp-v1-3b-196-q4f16_1/mlc-chat-config.json --device android -o ./dist/libs/imp-v1-3b-196-q4f16_1-android.tar
+
+cd ./android/library
+./prepare_libs.sh
+```
+
+### Build Android App
+Go to `android/` and use Android Studio to build the app. (Follow https://llm.mlc.ai/docs/deploy/android.html)
+
+## Run on Linux/Windows
+
+### Prepare Enviroment
+
+1. Follow https://llm.mlc.ai/docs/install/tvm.html to Install TVM Unity Compiler
+
+2. Follow https://llm.mlc.ai/docs/install/mlc_llm.html to Install MLC LLM Python Package
+
+### Compile Model
+
+put huggingface downloaded model checkpoint into `dist/models`.
+
+use Vulkan as an example:
+```
+# covert imp model into 4bit
+mlc_llm convert_weight --model-type imp ./dist/models/imp-v1-3b_196 --quantization q4f16_1 -o ./dist/imp-v1-3b_196-q4f16_1
+
+# generate config
+mlc_llm gen_config ./dist/models/imp-v1-3b-196 --quantization q4f16_1 --conv-template imp -o ./dist/imp-v1-3b-196-q4f16_1
+
+# compile to vulkan
+mlc_llm compile ./dist/imp-v1-3b-196-q4f16_1/mlc-chat-config.json --device vulkan -o ./dist/libs/imp-v1-3b-196-q4f16_1-vulkan.so
 ```
 
 ### Python API
 
-We can run the Llama-3 model with the chat completion Python API of MLC LLM.
-You can save the code below into a Python file and run it.
-
-```python
-from mlc_llm import MLCEngine
-
-# Create engine
-model = "HF://mlc-ai/Llama-3-8B-Instruct-q4f16_1-MLC"
-engine = MLCEngine(model)
-
-# Run chat completion in OpenAI API.
-for response in engine.chat.completions.create(
-    messages=[{"role": "user", "content": "What is the meaning of life?"}],
-    model=model,
-    stream=True,
-):
-    for choice in response.choices:
-        print(choice.delta.content, end="", flush=True)
-print("\n")
-
-engine.terminate()
 ```
+import tvm
+from mlc_llm import ChatModule
+from PIL import Image
 
-**The Python API of `mlc_llm.MLCEngine` fully aligns with OpenAI API**.
-You can use MLCEngine in the same way of using
-[OpenAI's Python package](https://github.com/openai/openai-python?tab=readme-ov-file#usage)
-for both synchronous and asynchronous generation.
+from transformers.image_utils import (
+    ChannelDimension,
+    PILImageResampling,
+    to_numpy_array,
+)
+from transformers.image_transforms import (
+    convert_to_rgb,
+    normalize,
+    rescale,
+    resize,
+    to_channel_dimension_format,
+)
+from functools import partial, reduce
+from transformers.image_processing_utils import BatchFeature
 
-If you would like to do concurrent asynchronous generation, you can use `mlc_llm.AsyncMLCEngine` instead.
+def load_image(image_file):
+    from io import BytesIO
+    import requests
+    from PIL import Image
 
-### REST Server
+    if image_file.startswith("http") or image_file.startswith("https"):
+        response = requests.get(image_file)
+        image = Image.open(BytesIO(response.content)).convert("RGB")
+    else:
+        image = Image.open(image_file).convert("RGB")
+    return image
+    
+def simple_image_processor(
+        images, 
+        image_mean=(0.5, 0.5, 0.5), 
+        image_std=(0.5, 0.5, 0.5), 
+        size=(196, 196), 
+        resample=PILImageResampling.BICUBIC, 
+        rescale_factor=1 / 255, 
+        data_format=ChannelDimension.FIRST,
+        return_tensors="pt"
+    ):
 
-We can launch a REST server to serve the 4-bit quantized Llama-3 model for OpenAI chat completion requests.
-The server has fully OpenAI API completeness.
+    if isinstance(images, Image.Image):
+        images = [images]
+    else:
+        assert isinstance(images, list)
+    
+    transforms = [
+        convert_to_rgb,
+        to_numpy_array,
+        partial(resize, size=size, resample=resample, data_format=data_format),
+        partial(rescale, scale=rescale_factor, data_format=data_format),
+        partial(normalize, mean=image_mean, std=image_std, data_format=data_format),
+        partial(to_channel_dimension_format, channel_dim=data_format, input_channel_dim=data_format),
+    ]
 
-```bash
-mlc_llm serve HF://mlc-ai/Llama-3-8B-Instruct-q4f16_1-MLC
+    images = reduce(lambda x, f: [*map(f, x)], transforms, images)
+    data = {"pixel_values": images}
+    
+    return BatchFeature(data=data, tensor_type=return_tensors)
+
+image_path = "./assets/bus.jpg"
+image_tensor = load_image(image_path)
+image_features = tvm.nd.array(
+    simple_image_processor(image_tensor)['pixel_values'].numpy().astype("float32"),
+    device=tvm.runtime.ndarray.vulkan(),
+)
+cm = ChatModule(model="./dist/imp-v1-3b-196-q4f16_1", model_lib_path="./dist/libs/imp-v1-3b-196-q4f16_1-vulkan.so")
+
+output = cm.generate(
+    prompt="<image>\nWhat are the colors of the bus in the image?",
+    pixel_values=image_features
+)
+print(output)
+
 ```
-
-The server is hooked at `http://127.0.0.1:8000` by default, and you can use `--host` and `--port`
-to set a different host and port.
-When the server is ready (showing `INFO: Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)`),
-we can open a new shell and send a cURL request via the following command:
-
-```bash
-curl -X POST \
-  -H "Content-Type: application/json" \
-  -d '{
-        "model": "HF://mlc-ai/Llama-3-8B-Instruct-q4f16_1-MLC",
-        "messages": [
-            {"role": "user", "content": "Hello! Our project is MLC LLM. What is the name of our project?"}
-        ]
-  }' \
-  http://127.0.0.1:8000/v1/chat/completions
-```
-
-## Universal Deployment APIs
-
-MLC LLM provides multiple sets of APIs across platforms and environments. These include
-* [Python API](https://llm.mlc.ai/docs/deploy/python_engine.html)
-* [OpenAI-compatible Rest-API](https://llm.mlc.ai/docs/deploy/rest.html)
-* [C++ API](https://llm.mlc.ai/docs/deploy/cli.html)
-* [JavaScript API](https://llm.mlc.ai/docs/deploy/javascript.html) and [Web LLM](https://github.com/mlc-ai/web-llm)
-* [Swift API for iOS App](https://llm.mlc.ai/docs/deploy/ios.html)
-* [Java API and Android App](https://llm.mlc.ai/docs/deploy/android.html)
-
-## Citation
-
-Please consider citing our project if you find it useful:
-
-```bibtex
-@software{mlc-llm,
-    author = {MLC team},
-    title = {{MLC-LLM}},
-    url = {https://github.com/mlc-ai/mlc-llm},
-    year = {2023}
-}
-```
-
-The underlying techniques of MLC LLM include:
-
-<details>
-  <summary>References (Click to expand)</summary>
-
-  ```bibtex
-  @inproceedings{tensorir,
-      author = {Feng, Siyuan and Hou, Bohan and Jin, Hongyi and Lin, Wuwei and Shao, Junru and Lai, Ruihang and Ye, Zihao and Zheng, Lianmin and Yu, Cody Hao and Yu, Yong and Chen, Tianqi},
-      title = {TensorIR: An Abstraction for Automatic Tensorized Program Optimization},
-      year = {2023},
-      isbn = {9781450399166},
-      publisher = {Association for Computing Machinery},
-      address = {New York, NY, USA},
-      url = {https://doi.org/10.1145/3575693.3576933},
-      doi = {10.1145/3575693.3576933},
-      booktitle = {Proceedings of the 28th ACM International Conference on Architectural Support for Programming Languages and Operating Systems, Volume 2},
-      pages = {804–817},
-      numpages = {14},
-      keywords = {Tensor Computation, Machine Learning Compiler, Deep Neural Network},
-      location = {Vancouver, BC, Canada},
-      series = {ASPLOS 2023}
-  }
-
-  @inproceedings{metaschedule,
-      author = {Shao, Junru and Zhou, Xiyou and Feng, Siyuan and Hou, Bohan and Lai, Ruihang and Jin, Hongyi and Lin, Wuwei and Masuda, Masahiro and Yu, Cody Hao and Chen, Tianqi},
-      booktitle = {Advances in Neural Information Processing Systems},
-      editor = {S. Koyejo and S. Mohamed and A. Agarwal and D. Belgrave and K. Cho and A. Oh},
-      pages = {35783--35796},
-      publisher = {Curran Associates, Inc.},
-      title = {Tensor Program Optimization with Probabilistic Programs},
-      url = {https://proceedings.neurips.cc/paper_files/paper/2022/file/e894eafae43e68b4c8dfdacf742bcbf3-Paper-Conference.pdf},
-      volume = {35},
-      year = {2022}
-  }
-
-  @inproceedings{tvm,
-      author = {Tianqi Chen and Thierry Moreau and Ziheng Jiang and Lianmin Zheng and Eddie Yan and Haichen Shen and Meghan Cowan and Leyuan Wang and Yuwei Hu and Luis Ceze and Carlos Guestrin and Arvind Krishnamurthy},
-      title = {{TVM}: An Automated {End-to-End} Optimizing Compiler for Deep Learning},
-      booktitle = {13th USENIX Symposium on Operating Systems Design and Implementation (OSDI 18)},
-      year = {2018},
-      isbn = {978-1-939133-08-3},
-      address = {Carlsbad, CA},
-      pages = {578--594},
-      url = {https://www.usenix.org/conference/osdi18/presentation/chen},
-      publisher = {USENIX Association},
-      month = oct,
-  }
-  ```
-</details>
-
-## Links
-
-- You might want to check out our online public [Machine Learning Compilation course](https://mlc.ai) for a systematic
-walkthrough of our approaches.
-- [WebLLM](https://webllm.mlc.ai/) is a companion project using MLC LLM's WebGPU and WebAssembly backend.
-- [WebStableDiffusion](https://websd.mlc.ai/) is a companion project for diffusion models with the WebGPU backend.
-
