@@ -26,7 +26,7 @@
 </div>
 
 3. Chat with Imp: (1) Wait for model initialization until "Ready to chat" pop up. (2) Upload image (3) Type and send question
-    - Chat mode: Text or Vision are both support
+    - Chat mode: **Text** or **Vision** are both support
 <div>
     <img src="assets/chat1.jpg" width="350">
     <img src="assets/chat2.jpg" width="350">
@@ -34,8 +34,10 @@
 
 4. Demo 
 
-<img src="assets/chat3.jpg" width="250">
-<img src="assets/chat4.jpg" width="250">
+<div>
+    <img src="assets/chat3.jpg" width="250">
+    <img src="assets/chat4.jpg" width="250">
+</div>
 
 ### Prepare Enviroment
 
