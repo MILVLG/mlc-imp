@@ -8,31 +8,31 @@
 
 ⚠️ Note that the models run on android are quantized to 4-bit and may lose some performance.
 
-🎉 The model weights of `imp-v1-3b-196` are on 🤗[[Huggingface](https://huggingface.co/MILVLG/imp-v1-3b/)\] (Approximately 1.9G of space occupied)
+🎉 The model weights of `imp-v1-3b-196` are on 🤗[[Huggingface](https://huggingface.co/MILVLG/imp-v1-3b-196/)\] (Approximately 1.9G of space occupied after 4-bit quantization)
 
 ## Run on Android
 ### Android APK
 
 1. Accept camera & photo permission
 
-<img src="assets/permission.jpg" style="zoom:10%">
+<img src="assets/permission.jpg" width="250px">
 
 2. Download model: (1) Press the download button (2) Wait for the progress bar to fill up (3) Start chat 
 
-<img src="assets/download1.jpg" style="zoom:40%">
-<img src="assets/download2.jpg" style="zoom:40%">
-<img src="assets/download3.jpg" style="zoom:40%">
+<img src="assets/download1.jpg" width="300px">
+<img src="assets/download2.jpg" width="300px">
+<img src="assets/download3.jpg" width="300px">
 
 3. Chat with Imp: (1) Wait for model initialization until "Ready to chat" pop up. (2) Upload image (3) Type and send question
     - Chat mode: Text or Vision are both support
 
-<img src="assets/chat1.jpg" style="zoom:25%">
-<img src="assets/chat2.jpg" style="zoom:25%">
+<img src="assets/chat1.jpg" width="300px">
+<img src="assets/chat2.jpg" width="300px">
 
-4. Demo
+4. Demo 
 
-<img src="assets/chat3.jpg" style="zoom:25%">
-<img src="assets/chat4.jpg" style="zoom:25%">
+<img src="assets/chat3.jpg" width="250px">
+<img src="assets/chat4.jpg" width="250px">
 
 ### Prepare Enviroment
 
