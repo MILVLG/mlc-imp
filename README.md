@@ -15,7 +15,7 @@
 
 1. Accept camera & photo permission
 
-<img src="assets/permission.jpg" style="zoom:30%">
+<img src="assets/permission.jpg" style="zoom:10%">
 
 2. Download model: (1) Press the download button (2) Wait for the progress bar to fill up (3) Start chat 
 
