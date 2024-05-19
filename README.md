@@ -19,9 +19,9 @@
 
 2. Download model: (1) Press the download button (2) Wait for the progress bar to fill up (3) Start chat 
 
-<img src="assets/download1.jpg" width="300px">
-<img src="assets/download2.jpg" width="300px">
-<img src="assets/download3.jpg" width="300px">
+<img src="assets/download1.jpg" width="100px">
+<img src="assets/download2.jpg" width="100px">
+<img src="assets/download3.jpg" width="100px">
 
 3. Chat with Imp: (1) Wait for model initialization until "Ready to chat" pop up. (2) Upload image (3) Type and send question
     - Chat mode: Text or Vision are both support
