@@ -60,6 +60,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat.startActivityForResult
@@ -67,6 +68,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.util.Locale
 
 @ExperimentalMaterial3Api
 @Composable
@@ -79,7 +81,7 @@ fun ChatView(
         TopAppBar(
             title = {
                 Text(
-                    text = "MLCChat: " + chatState.modelName.value.split("-")[0],
+                    text = "Imp Chat",
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             },
@@ -175,20 +177,20 @@ fun compressImage(image: Bitmap): Bitmap? {
     return BitmapFactory.decodeStream(isBm, null, null) //把ByteArrayInputStream数据生成图片
 }
 fun scaleSize(image: Bitmap, newW : Int, newH: Int): Bitmap {
-    if (image.height == image.width)
-        return image
-    val maxDimension = Math.max(image.height, image.width)
-    val squareBitmap = Bitmap.createBitmap(maxDimension, maxDimension, image.config)
-    val canvas = Canvas(squareBitmap)
-    val paint = Paint()
-    paint.color = Color.rgb(127,127,127)
-    canvas.drawRect(0f, 0f, maxDimension.toFloat(), maxDimension.toFloat(), paint)
-    if (image.height > image.width) {
-        canvas.drawBitmap(image, (image.height-image.width)/2f, 0f, null)
-    } else {
-        canvas.drawBitmap(image, 0f, (image.width-image.height)/2f, null)
-    }
-    return Bitmap.createScaledBitmap(squareBitmap, newW, newH, true)
+//    if (image.height == image.width)
+//        return image
+//    val maxDimension = Math.max(image.height, image.width)
+//    val squareBitmap = Bitmap.createBitmap(maxDimension, maxDimension, image.config)
+//    val canvas = Canvas(squareBitmap)
+//    val paint = Paint()
+//    paint.color = Color.rgb(127,127,127)
+//    canvas.drawRect(0f, 0f, maxDimension.toFloat(), maxDimension.toFloat(), paint)
+//    if (image.height > image.width) {
+//        canvas.drawBitmap(image, (image.height-image.width)/2f, 0f, null)
+//    } else {
+//        canvas.drawBitmap(image, 0f, (image.width-image.height)/2f, null)
+//    }
+    return Bitmap.createScaledBitmap(image, newW, newH, true)
 }
 
 fun getImage(srcPath: String?): Bitmap? {
@@ -202,8 +204,8 @@ fun getImage(srcPath: String?): Bitmap? {
     val w = newOpts.outWidth
     val h = newOpts.outHeight
     //现在主流手机比较多是800*480分辨率，所以高和宽我们设置为
-    val hh = 224f //这里设置高度为224f
-    val ww = 224f //这里设置宽度为224f
+    val hh = 196f //这里设置高度为196f
+    val ww = 196f //这里设置宽度为196f
     //缩放比。由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
     var be = 1 //be=1表示不缩放
     if (w > h && w > ww) { //如果宽度大的话根据宽度固定大小缩放
@@ -216,7 +218,7 @@ fun getImage(srcPath: String?): Bitmap? {
     //重新读入图片，注意此时已经把options.inJustDecodeBounds 设回false了
     bitmap = BitmapFactory.decodeFile(srcPath, newOpts)
     //return compressImage(bitmap) //压缩好比例大小后再进行质量压缩
-    return scaleSize(bitmap, 224, 224)
+    return scaleSize(bitmap, 196, 196)
 }
 
 fun bitmapToBytes(bitmap: Bitmap): FloatArray{
@@ -273,9 +275,9 @@ fun MessageView(messageData: MessageData, activity: Activity) {
                     if (bitmap != null) {
                         val image_data = bitmapToBytes(bitmap)
                         Log.v("get_image", image_data.size.toString())
-
+                        var display_bitmap = Bitmap.createScaledBitmap(bitmap, 224, 224, true)
                         Image(
-                            bitmap.asImageBitmap(),
+                            display_bitmap.asImageBitmap(),
                             "",
                             modifier = Modifier
                                 .wrapContentWidth()

@@ -240,23 +240,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         chatState = AppViewModel(this.application).ChatState()
-        val permission = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(
-                android.Manifest.permission.READ_EXTERNAL_STORAGE),1
-            )
-        }
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(
-                android.Manifest.permission.READ_MEDIA_IMAGES),1
-            )
-        }
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(
-                android.Manifest.permission.CAMERA),1
-            )
-        }
-
+        getPermission()
         setContent {
             Surface(
                 modifier = Modifier
@@ -266,6 +250,31 @@ class MainActivity : ComponentActivity() {
                     NavView(this)
                 }
             }
+        }
+    }
+    val PERMISSIONS_LIST = arrayOf(
+        android.Manifest.permission.READ_EXTERNAL_STORAGE,
+        android.Manifest.permission.READ_MEDIA_IMAGES,
+        android.Manifest.permission.CAMERA,
+        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        )
+    fun getPermission() {
+//        for (item in PERMISSIONS_LIST) {
+//            val permission = ActivityCompat.checkSelfPermission(this, item)
+//            if (permission != PackageManager.PERMISSION_GRANTED) {
+//                ActivityCompat.requestPermissions(this, arrayOf(
+//                    item),1
+//                )
+//            }
+//        }
+        var permission = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_MEDIA_IMAGES)
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(
+                android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                android.Manifest.permission.READ_MEDIA_IMAGES,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                android.Manifest.permission.CAMERA),1
+            )
         }
     }
 

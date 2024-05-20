@@ -1,8 +1,19 @@
 package ai.mlc.mlcllm;
 
+import android.annotation.SuppressLint;
+import android.renderscript.Float2;
+import android.util.Half;
+import android.util.Log;
+
+import androidx.annotation.HalfFloat;
+
 import org.apache.tvm.Device;
 import org.apache.tvm.Function;
 import org.apache.tvm.Module;
+import org.apache.tvm.NDArray;
+import org.apache.tvm.TVMType;
+
+import java.nio.FloatBuffer;
 
 public class ChatModule {
     private Function reloadFunc;
@@ -14,6 +25,8 @@ public class ChatModule {
     private Function resetChatFunc;
     private Function runtimeStatsTextFunc;
     private Module llmChat;
+
+    private float[] image_array;
 
     public ChatModule() {
         Function createFunc = Function.getFunction("mlc.llm_chat_create");
@@ -29,13 +42,17 @@ public class ChatModule {
         runtimeStatsTextFunc = llmChat.getFunction("runtime_stats_text");
     }
 
+
+    public void image(float[] inp) {
+        image_array = inp;
+    }
     public void unload() {
         unloadFunc.invoke();
     }
 
     public void reload(
-        String modelLib,
-        String modelPath
+            String modelLib,
+            String modelPath
     ) {
         String libPrefix = modelLib.replace('-', '_') + "_";
         Function systemLibFunc = Function.getFunction("runtime.SystemLib");
@@ -50,8 +67,17 @@ public class ChatModule {
         resetChatFunc.invoke();
     }
 
+
     public void prefill(String input) {
-        prefillFunc.pushArg(input).invoke();
+        if (!input.contains("<image>")) {
+            prefillFunc.pushArg(input).invoke();
+        } else {
+            long[] shape = {1, 3, 196, 196};
+            NDArray img = NDArray.empty(shape, new TVMType("float32"), Device.opencl());
+            img.copyFrom(image_array);
+//            String generation_config_str="{\"temperature\": 0, \"repetition_penalty\": 1.0, \"top_p\": 0.95, \"mean_gen_len\": 128, \"max_gen_len\": 512, \"presence_penalty\": 0.0, \"frequency_penalty\": 1.0, \"n\": null, \"stop\": null, \"kwargs\": {}}";
+            prefillFunc.pushArg(input).pushArg(1).pushArg(0).pushArg("").pushArg(img).invoke();
+        }
     }
 
     public String getMessage() {
@@ -71,6 +97,7 @@ public class ChatModule {
     }
 
     public void decode() {
-        decodeFunc.invoke();
+//        String generation_config_str="{\"temperature\": 0, \"repetition_penalty\": 1.0, \"top_p\": 0.95, \"mean_gen_len\": 128, \"max_gen_len\": 512, \"presence_penalty\": 0.0, \"frequency_penalty\": 1.0, \"n\": null, \"stop\": null, \"kwargs\": {}}";
+        decodeFunc.pushArg("").invoke();
     }
 }
