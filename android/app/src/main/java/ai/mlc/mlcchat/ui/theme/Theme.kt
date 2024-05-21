@@ -17,14 +17,14 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Blue80,
-    onPrimary = Blue20,
-    primaryContainer = Blue30,
-    onPrimaryContainer = Blue90,
+    primary = Purple30,
+    onPrimary = Color.White,
+    primaryContainer = Purple90,
+    onPrimaryContainer = Blue20,
     inversePrimary = Blue40,
-    secondary = DarkBlue80,
+    secondary = DarkBlue40,
     onSecondary = DarkBlue20,
-    secondaryContainer = DarkBlue30,
+    secondaryContainer = DarkBlue40,
     onSecondaryContainer = DarkBlue90,
     tertiary = Yellow80,
     onTertiary = Yellow20,
@@ -46,10 +46,10 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Blue40,
+    primary = Purple30,
     onPrimary = Color.White,
-    primaryContainer = Blue90,
-    onPrimaryContainer = Blue10,
+    primaryContainer = Purple90,
+    onPrimaryContainer = Blue20,
     inversePrimary = Blue80,
     secondary = DarkBlue40,
     onSecondary = Color.White,
@@ -78,7 +78,7 @@ private val LightColorScheme = lightColorScheme(
 fun MLCChatTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

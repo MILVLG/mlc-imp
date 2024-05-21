@@ -1,7 +1,7 @@
 {
   "model_list": [
     {
-      "model_url": "https://hf-mirror.com/ricar0/imp-v1-3b-196-q4f16_1-mlc",
+      "model_url": "https://hf-mirror.com/MILVLG/imp-v1.5-3B-196-q4f16_1-MLC",
       "model_lib": "imp_q4f16_1",
       "model_id": "imp-v1-3b-196-q4f16_1"
     }
