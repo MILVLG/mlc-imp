@@ -4,11 +4,11 @@
 
 ## Model Description
 
-⚠️ Our default version is to use Siglip with an input image size of 384x384, but considering the limitation of running speed on the mobile phone, we retrained Imp to use a Siglip version with an input image size of 196x196. (More details can be viewed in [arXiv]()).
+⚠️ Our default version is to use Siglip with an input image size of 384x384, but considering the limitation of running speed on the mobile phone, we retrained Imp to use a Siglip version with an input image size of 196x196. (More details can be viewed in [arXiv](https://arxiv.org/abs/2405.12107)).
 
 ⚠️ Note that the models run on android are quantized to 4-bit and may lose some performance.
 
-🎉 The model weights of `imp-v1-3b-196` are on 🤗[[Huggingface](https://huggingface.co/MILVLG/imp-v1-3b-196/)\] (Approximately 1.9G of space occupied after 4-bit quantization)
+🎉 The model weights of `Imp-v1.5-3B-196` are on 🤗[[Huggingface](https://huggingface.co/MILVLG/imp-v1-3b-196/)\] (Approximately 1.9G of space occupied after 4-bit quantization)
 
 ## Run on Android
 ### Android APK
@@ -53,13 +53,13 @@ put huggingface downloaded model checkpoint into `dist/models`.
 
 ```
 # covert imp model into 4bit
-mlc_llm convert_weight --model-type imp ./dist/models/imp-v1-3b-196 --quantization q4f16_1 -o ./dist/imp-v1-3b-196-q4f16_1
+mlc_llm convert_weight --model-type imp ./dist/models/imp-v1.5-3B-196 --quantization q4f16_1 -o ./dist/imp-v1.5-3B-196-q4f16_1
 
 # generate config
-mlc_llm gen_config ./dist/models/imp-v1-3b-196 --quantization q4f16_1 --conv-template imp -o ./dist/imp-v1-3b-196-q4f16_1
+mlc_llm gen_config ./dist/models/imp-v1.5-3B-196 --quantization q4f16_1 --conv-template imp -o ./dist/imp-v1.5-3B-196-q4f16_1
 
 # compile to android
-mlc_llm compile ./dist/imp-v1-3b-196-q4f16_1/mlc-chat-config.json --device android -o ./dist/libs/imp-v1-3b-196-q4f16_1-android.tar
+mlc_llm compile ./dist/imp-v1.5-3B-196-q4f16_1/mlc-chat-config.json --device android -o ./dist/libs/imp-v1.5-3B-196-q4f16_1-android.tar
 
 cd ./android/library
 ./prepare_libs.sh
@@ -83,13 +83,13 @@ put huggingface downloaded model checkpoint into `dist/models`.
 use Vulkan as an example:
 ```
 # covert imp model into 4bit
-mlc_llm convert_weight --model-type imp ./dist/models/imp-v1-3b_196 --quantization q4f16_1 -o ./dist/imp-v1-3b_196-q4f16_1
+mlc_llm convert_weight --model-type imp ./dist/models/imp-v1.5-3B_196 --quantization q4f16_1 -o ./dist/imp-v1.5-3B_196-q4f16_1
 
 # generate config
-mlc_llm gen_config ./dist/models/imp-v1-3b-196 --quantization q4f16_1 --conv-template imp -o ./dist/imp-v1-3b-196-q4f16_1
+mlc_llm gen_config ./dist/models/imp-v1.5-3B-196 --quantization q4f16_1 --conv-template imp -o ./dist/imp-v1.5-3B-196-q4f16_1
 
 # compile to vulkan
-mlc_llm compile ./dist/imp-v1-3b-196-q4f16_1/mlc-chat-config.json --device vulkan -o ./dist/libs/imp-v1-3b-196-q4f16_1-vulkan.so
+mlc_llm compile ./dist/imp-v1.5-3B-196-q4f16_1/mlc-chat-config.json --device vulkan -o ./dist/libs/imp-v1.5-3B-196-q4f16_1-vulkan.so
 ```
 
 ### Python API
@@ -162,7 +162,7 @@ image_features = tvm.nd.array(
     simple_image_processor(image_tensor)['pixel_values'].numpy().astype("float32"),
     device=tvm.runtime.ndarray.vulkan(),
 )
-cm = ChatModule(model="./dist/imp-v1-3b-196-q4f16_1", model_lib_path="./dist/libs/imp-v1-3b-196-q4f16_1-vulkan.so")
+cm = ChatModule(model="./dist/imp-v1.5-3B-196-q4f16_1", model_lib_path="./dist/libs/imp-v1.5-3B-196-q4f16_1-vulkan.so")
 
 output = cm.generate(
     prompt="<image>\nWhat are the colors of the bus in the image?",
