@@ -26,8 +26,6 @@ public class ChatModule {
     private Function runtimeStatsTextFunc;
     private Module llmChat;
 
-    private float[] image_array;
-
     public ChatModule() {
         Function createFunc = Function.getFunction("mlc.llm_chat_create");
         assert createFunc != null;
@@ -44,7 +42,10 @@ public class ChatModule {
 
 
     public void image(float[] inp) {
-        image_array = inp;
+        long[] shape = {1, 3, 196, 196};
+        NDArray img = NDArray.empty(shape, new TVMType("float32"), Device.opencl());
+        img.copyFrom(inp);
+        prefillFunc.pushArg("<image>\n").pushArg(0).pushArg(0).pushArg("").pushArg(img).invoke();
     }
     public void unload() {
         unloadFunc.invoke();
@@ -69,15 +70,7 @@ public class ChatModule {
 
 
     public void prefill(String input) {
-        if (!input.contains("<image>")) {
-            prefillFunc.pushArg(input).invoke();
-        } else {
-            long[] shape = {1, 3, 196, 196};
-            NDArray img = NDArray.empty(shape, new TVMType("float32"), Device.opencl());
-            img.copyFrom(image_array);
-//            String generation_config_str="{\"temperature\": 0, \"repetition_penalty\": 1.0, \"top_p\": 0.95, \"mean_gen_len\": 128, \"max_gen_len\": 512, \"presence_penalty\": 0.0, \"frequency_penalty\": 1.0, \"n\": null, \"stop\": null, \"kwargs\": {}}";
-            prefillFunc.pushArg(input).pushArg(1).pushArg(0).pushArg("").pushArg(img).invoke();
-        }
+        prefillFunc.pushArg(input).invoke();
     }
 
     public String getMessage() {
@@ -97,7 +90,6 @@ public class ChatModule {
     }
 
     public void decode() {
-//        String generation_config_str="{\"temperature\": 0, \"repetition_penalty\": 1.0, \"top_p\": 0.95, \"mean_gen_len\": 128, \"max_gen_len\": 512, \"presence_penalty\": 0.0, \"frequency_penalty\": 1.0, \"n\": null, \"stop\": null, \"kwargs\": {}}";
         decodeFunc.pushArg("").invoke();
     }
 }

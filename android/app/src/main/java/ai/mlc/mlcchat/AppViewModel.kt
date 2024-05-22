@@ -677,12 +677,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             executorService.submit {
                 appendMessage(MessageRole.User, prompt)
                 appendMessage(MessageRole.Bot, "")
-                if (has_image_prompt) {
-                    if (!callBackend { backend.prefill("<image>\n"+prompt) }) return@submit
-                    has_image_prompt = false
-                } else {
-                    if (!callBackend { backend.prefill(prompt) }) return@submit
-                }
+                if (!callBackend { backend.prefill(prompt) }) return@submit
                 while (!backend.stopped()) {
                     if (!callBackend {
                             backend.decode()

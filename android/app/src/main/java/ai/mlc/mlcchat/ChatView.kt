@@ -177,19 +177,19 @@ fun compressImage(image: Bitmap): Bitmap? {
     return BitmapFactory.decodeStream(isBm, null, null) //把ByteArrayInputStream数据生成图片
 }
 fun scaleSize(image: Bitmap, newW : Int, newH: Int): Bitmap {
-//    if (image.height == image.width)
-//        return image
-//    val maxDimension = Math.max(image.height, image.width)
-//    val squareBitmap = Bitmap.createBitmap(maxDimension, maxDimension, image.config)
-//    val canvas = Canvas(squareBitmap)
-//    val paint = Paint()
-//    paint.color = Color.rgb(127,127,127)
-//    canvas.drawRect(0f, 0f, maxDimension.toFloat(), maxDimension.toFloat(), paint)
-//    if (image.height > image.width) {
-//        canvas.drawBitmap(image, (image.height-image.width)/2f, 0f, null)
-//    } else {
-//        canvas.drawBitmap(image, 0f, (image.width-image.height)/2f, null)
-//    }
+    if (image.height == image.width)
+        return image
+    val maxDimension = Math.max(image.height, image.width)
+    val squareBitmap = Bitmap.createBitmap(maxDimension, maxDimension, image.config)
+    val canvas = Canvas(squareBitmap)
+    val paint = Paint()
+    paint.color = Color.rgb(127,127,127)
+    canvas.drawRect(0f, 0f, maxDimension.toFloat(), maxDimension.toFloat(), paint)
+    if (image.height > image.width) {
+        canvas.drawBitmap(image, (image.height-image.width)/2f, 0f, null)
+    } else {
+        canvas.drawBitmap(image, 0f, (image.width-image.height)/2f, null)
+    }
     return Bitmap.createScaledBitmap(image, newW, newH, true)
 }
 
@@ -275,7 +275,7 @@ fun MessageView(messageData: MessageData, activity: Activity) {
                     if (bitmap != null) {
                         val image_data = bitmapToBytes(bitmap)
                         Log.v("get_image", image_data.size.toString())
-                        var display_bitmap = Bitmap.createScaledBitmap(bitmap, 224, 224, true)
+                        var display_bitmap = Bitmap.createScaledBitmap(bitmap, 384, 384, true)
                         Image(
                             display_bitmap.asImageBitmap(),
                             "",
