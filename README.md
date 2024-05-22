@@ -1,6 +1,6 @@
 # 😈 MLC-Imp
 
-🙌 Hi There! This is a lightweight deployment solution for Imp based on [MLC-LLM](https://github.com/mlc-ai/mlc-llm) and [MLC-MiniCPM](https://github.com/OpenBMB/mlc-MiniCPM). We deployed Imp on mobile devices📱and greatly improved the running speed🚀 during model inference.
+🙌 Hi there! This is a lightweight deployment solution for Imp based on [MLC-LLM](https://github.com/mlc-ai/mlc-llm) and [MLC-MiniCPM](https://github.com/OpenBMB/mlc-MiniCPM). We deployed Imp on mobile devices📱and greatly improved the running speed🚀 during model inference.
 
 ## Model Description
 
@@ -25,18 +25,21 @@
     <img src="assets/download3.jpg" width="350">
 </div>
 
-3. Chat with Imp: (1) Wait for model initialization until "Ready to chat" pop up. (2) Upload image (3) Type and send question
+3. Chat with Imp: (1) Wait for model initialization until "Ready to chat" pop up. (2) Upload image (3) Wait until "process image done" show up (4) Type and send question
     - Chat mode: **Text** or **Vision** are both support
+    - Note：image process may take some time.
 <div>
-    <img src="assets/chat1.jpg" width="350">
-    <img src="assets/chat2.jpg" width="350">
+    <img src="assets/chat1.jpg" width="200">
+    <img src="assets/chat2.jpg" width="200">
+    <img src="assets/chat3.jpg" width="200">
+
 </div>
 
 4. Demo 
 
 <div>
-    <img src="assets/chat3.jpg" width="250">
-    <img src="assets/chat4.jpg" width="250">
+    <img src="assets/demo1.gif" width="300">
+    <img src="assets/demo2.gif" width="300">
 </div>
 
 ### Prepare Enviroment
