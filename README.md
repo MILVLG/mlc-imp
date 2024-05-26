@@ -38,8 +38,8 @@
 4. Demo 
 
 <div>
-    <img src="assets/demo1.gif" width="300">
-    <img src="assets/demo2.gif" width="300">
+    <img src="assets/demo1_480p.gif" width="300">
+    <img src="assets/demo2_480p.gif" width="300">
 </div>
 
 ### Prepare Enviroment
