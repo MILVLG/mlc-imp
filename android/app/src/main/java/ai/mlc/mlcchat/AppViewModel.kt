@@ -658,7 +658,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             require(chatable())
             var newText = ""
             switchToGenerating()
-            Toast.makeText(application, "Image Processing...", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(application, "Image Processing...", Toast.LENGTH_LONG).show()
+            report.value = "Image Processing..."
             executorService.submit {
                 if (!callBackend { backend.image(img) }) return@submit
                 has_image_prompt = true
